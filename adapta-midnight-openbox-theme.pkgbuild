@@ -1,0 +1,49 @@
+# Maintainer: Nicholas Atkins <nbatkins@gmail.com>
+
+pkgname=adapta-midnight-openbox-theme-git
+pkgver=a551a9c
+
+pkgrel=1
+pkgdesc='An adaptive Gtk+ theme based on Material Design Guidelines'
+arch=('any')
+url='https://github.com/gtk-themes/adapta-midnight'
+license=('GPL2')
+depends=('gtk-engine-murrine' 'gtk3')
+makedepends=('git' 'inkscape' 'libxml2' 'parallel' 'sassc')
+optdepends=('openbox: Openbox desktop')
+provides=('adapta-midnight-openbox-theme')
+conflicts=('adapta-midnight-openbox-theme' 'adapta-midnight-gtk-theme-git')
+source=('git+https://github.com/gtk-themes/adapta-midnight.git')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd adapta-midnight
+
+  git describe --always | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
+}
+
+build() {
+  cd adapta-midnight
+
+  #bundle install --path .
+  #export PATH="$(find $PWD/ruby -maxdepth 2 -type d -name bin):$PATH"
+
+  ./autogen.sh \
+    --prefix='/usr' \
+    --enable-parallel \
+    --enable-chrome \
+    --enable-plank \
+    --enable-telegram \
+    --disable-unity \
+    --disable-gnome \
+    --disable-cinnamon
+  make
+}
+
+package() {
+  cd adapta-midnight
+
+  make DESTDIR="${pkgdir}" install
+}
+
+# vim: ts=2 sw=2 et:
